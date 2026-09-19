@@ -158,7 +158,7 @@
         }
         .gallery-item {
             width: 100%; height: 320px; overflow: hidden;
-            opacity: 0; border-radius: 0; cursor: pointer; /* 增加鼠标手型提示可点击 */
+            opacity: 0; border-radius: 0; cursor: pointer;
         }
         .gallery-item img {
             width: 100%; height: 100%; object-fit: cover;
@@ -177,7 +177,7 @@
         
         .lightbox-modal img {
             max-width: 95%; max-height: 95%;
-            object-fit: contain; /* 确保图片完整显示，不裁剪 */
+            object-fit: contain;
             border-radius: 4px;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
             transform: scale(0.95); transition: transform 0.3s ease;
@@ -259,7 +259,6 @@
 
     <!-- 首屏 Banner (轮播模式) -->
     <section id="hero">
-        <!-- 注意：路径已经改为 ./Imge/ -->
         <div class="hero-bg active" style="background-image: url('./Imge/banner1.jpg');"></div>
         <div class="hero-bg" style="background-image: url('./Imge/banner2.jpg');"></div>
         <div class="hero-bg" style="background-image: url('./Imge/banner3.jpg');"></div>
@@ -329,9 +328,7 @@
         <div class="gallery-content">
             <span class="gallery-close" onclick="closeGallery()">×</span>
             <h2 class="gallery-title" id="galleryTitle">风格案例展示</h2>
-            <div class="gallery-grid" id="galleryGrid">
-                <!-- 图片由 JS 动态填充 -->
-            </div>
+            <div class="gallery-grid" id="galleryGrid"></div>
         </div>
     </div>
 
@@ -382,23 +379,25 @@
                     <p style="margin-top: 30px; color: #888; font-size: 14px;">温馨提示：为了给您提供更精准的服务，建议提前电话预约或在线提交需求，我们的设计师将在24小时内与您联系。</p>
                 </div>
                 
+                <!-- ================= 已替换为您的金数据表单 ================= -->
                 <div class="contact-form fade-in delay-2">
-                    <form action="#" method="POST">
+                    <form action="https://wjjm7xio.jsjform.com/f/V6PWKU" method="POST" target="_blank">
                         <div class="form-group">
                             <label>您的称呼</label>
-                            <input type="text" placeholder="请输入您的姓名" required>
+                            <!-- 请务必检查 name 属性是否和金数据表单里的字段名一致，常见为 name / xingming / field_1 -->
+                            <input type="text" name="name" placeholder="请输入您的姓名" required>
                         </div>
                         <div class="form-group">
                             <label>联系电话</label>
-                            <input type="tel" placeholder="请输入您的手机号码" required>
+                            <input type="tel" name="phone" placeholder="请输入您的手机号码" required>
                         </div>
                         <div class="form-group">
                             <label>小区 / 面积</label>
-                            <input type="text" placeholder="例如：丽君现代城 120㎡">
+                            <input type="text" name="address" placeholder="例如：丽君现代城 120㎡">
                         </div>
                         <div class="form-group">
                             <label>需求类型</label>
-                            <select>
+                            <select name="type">
                                 <option>整装（全包）</option>
                                 <option>旧房改造</option>
                                 <option>局部装修</option>
@@ -408,6 +407,8 @@
                         <button type="submit" class="submit-btn">立即预约免费设计</button>
                     </form>
                 </div>
+                <!-- ======================================================= -->
+
             </div>
         </div>
     </section>
@@ -462,7 +463,6 @@
             }, 100);
 
             // ================= 3. 图库数据与交互逻辑 =================
-            // 注意：路径已经全部改为 './Imge/'
             const galleryData = {
                 'modern': {
                     title: '现代简约 · 实景案例',
@@ -502,7 +502,6 @@
             const lightboxModal = document.getElementById('lightboxModal');
             const lightboxImg = document.getElementById('lightboxImg');
 
-            // 打开图库
             window.openGallery = function(styleKey) {
                 const data = galleryData[styleKey];
                 if (!data) return;
@@ -510,7 +509,6 @@
                 modalTitle.textContent = data.title;
                 modalGrid.innerHTML = '';
                 
-                // 动态生成图片
                 data.images.forEach((imgSrc, index) => {
                     const item = document.createElement('div');
                     item.className = 'gallery-item';
@@ -522,7 +520,6 @@
                     img.src = imgSrc;
                     img.alt = data.title;
                     
-                    // 核心新增：点击图库中的图片，调用放大灯箱
                     img.onclick = function() {
                         openLightbox(imgSrc);
                     };
@@ -535,20 +532,17 @@
                 document.body.style.overflow = 'hidden';
             };
 
-            // 关闭图库
             window.closeGallery = function() {
                 modal.classList.remove('active');
                 document.body.style.overflow = '';
             };
 
-            // 点击图库遮罩层也可以关闭图库
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     closeGallery();
                 }
             });
 
-            // ================= 4. 单图放大灯箱逻辑 =================
             window.openLightbox = function(src) {
                 lightboxImg.src = src;
                 lightboxModal.classList.add('active');
