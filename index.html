@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>佰益装饰欧派整装大家居</title>
+    <style>
+        /* 基础重置与全局样式 */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #333; background-color: #fcfcfc; line-height: 1.6;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        
+        /* ================= 动画核心样式 ================= */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+        .delay-1 { transition-delay: 0.1s; }
+        .delay-2 { transition-delay: 0.2s; }
+        .delay-3 { transition-delay: 0.3s; }
+        .delay-4 { transition-delay: 0.4s; }
+        .delay-5 { transition-delay: 0.5s; }
+
+        /* 发牌动画关键帧 */
+        @keyframes dealCard {
+            0% { opacity: 0; transform: translateY(60px) scale(0.85); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        /* ================================================= */
+
+        .section-title {
+            text-align: center; font-size: 32px; font-weight: 300;
+            margin-bottom: 20px; color: #222; letter-spacing: 2px;
+        }
+        .section-subtitle { text-align: center; color: #888; font-size: 16px; margin-bottom: 60px; }
+
+        /* 导航栏 */
+        header {
+            background: rgba(255, 255, 255, 0.98);
+            position: fixed; width: 100%; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-inner {
+            display: flex; justify-content: space-between;
+            align-items: center; height: 70px;
+        }
+        .logo { font-size: 22px; font-weight: 600; color: #222; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 40px; }
+        .nav-links a { font-size: 15px; color: #555; transition: color 0.3s; }
+        .nav-links a:hover { color: #c9a063; }
+        .nav-contact { font-size: 16px; font-weight: 600; color: #c9a063; }
+
+        /* 首屏 Banner 轮播区 */
+        #hero {
+            height: 90vh; min-height: 600px; margin-top: 70px;
+            position: relative; display: flex; align-items: center; justify-content: center;
+            text-align: center; color: #fff; overflow: hidden;
+        }
+        .hero-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; background-position: center;
+            opacity: 0; transition: opacity 1.5s ease-in-out; z-index: 1;
+        }
+        .hero-bg.active { opacity: 1; }
+        .hero-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.45); z-index: 2;
+        }
+        .hero-content { position: relative; z-index: 3; }
+        .hero-content h1 {
+            font-size: 48px; font-weight: 300;
+            margin-bottom: 20px; letter-spacing: 4px;
+        }
+        .hero-content p { font-size: 18px; margin-bottom: 10px; opacity: 0.9; }
+        .hero-btn {
+            display: inline-block; margin-top: 40px; padding: 15px 40px;
+            background-color: #c9a063; color: #fff; font-size: 16px;
+            border-radius: 30px; transition: background 0.3s, transform 0.3s;
+        }
+        .hero-btn:hover { background-color: #b08a52; transform: scale(1.05); }
+        .hero-bottom-bar {
+            position: absolute; bottom: 0; width: 100%;
+            background: rgba(0,0,0,0.6); padding: 15px 0; z-index: 3;
+            display: flex; justify-content: center; gap: 40px;
+            font-size: 14px; backdrop-filter: blur(5px);
+        }
+
+        /* 风格案例区 */
+        #styles { padding: 100px 0; background-color: #fff; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+        .style-card {
+            background: #f9f9f9; border-radius: 12px; overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s; cursor: pointer;
+        }
+        .style-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .style-card img { width: 100%; height: 300px; object-fit: cover; display: block; transition: transform 0.5s; }
+        .style-card:hover img { transform: scale(1.05); }
+        .style-info { padding: 30px; position: relative; z-index: 2; background: #f9f9f9; }
+        .style-tag {
+            display: inline-block; padding: 4px 12px; background: #eee;
+            color: #555; font-size: 12px; border-radius: 4px; margin-bottom: 15px;
+        }
+        .style-info h3 { font-size: 20px; font-weight: 500; margin-bottom: 15px; }
+        .style-info p { font-size: 14px; color: #666; margin-bottom: 15px; }
+        .style-info .highlight { color: #c9a063; font-weight: 500; }
+        .style-info .click-hint { font-size: 12px; color: #c9a063; margin-top: 15px; display: block;}
+
+        /* ================= 全屏图片画廊弹窗 ================= */
+        .gallery-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); z-index: 2000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+        .gallery-modal.active { opacity: 1; pointer-events: auto; }
+        
+        .gallery-content {
+            background: #f5f5f5; width: 100%; max-width: 1400px;
+            max-height: 90vh; border-radius: 8px;
+            padding: 30px; position: relative;
+            overflow-y: auto;
+            transform: translateY(30px); transition: transform 0.4s ease;
+        }
+        .gallery-modal.active .gallery-content { transform: translateY(0); }
+        
+        .gallery-close {
+            position: absolute; top: 20px; right: 25px;
+            font-size: 36px; color: #333; cursor: pointer;
+            transition: color 0.3s; line-height: 1; z-index: 10;
+            background: rgba(255,255,255,0.8); width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center; border-radius: 50%;
+        }
+        .gallery-close:hover { color: #c9a063; background: #fff; }
+        
+        .gallery-title {
+            text-align: center; font-size: 28px; font-weight: 500;
+            margin-bottom: 25px; color: #222;
+        }
+
+        /* 画廊图片排版：一行行展示 */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 6px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .gallery-item {
+            width: 100%; height: 320px; overflow: hidden;
+            opacity: 0; border-radius: 0; cursor: pointer; /* 增加鼠标手型提示可点击 */
+        }
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            display: block; transition: transform 0.6s ease;
+        }
+        .gallery-item:hover img { transform: scale(1.08); }
+
+        /* ================= 单图放大灯箱 (Lightbox) ================= */
+        .lightbox-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95); z-index: 3000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .lightbox-modal.active { opacity: 1; pointer-events: auto; }
+        
+        .lightbox-modal img {
+            max-width: 95%; max-height: 95%;
+            object-fit: contain; /* 确保图片完整显示，不裁剪 */
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            transform: scale(0.95); transition: transform 0.3s ease;
+        }
+        .lightbox-modal.active img { transform: scale(1); }
+
+        .lightbox-close {
+            position: absolute; top: 20px; right: 30px;
+            font-size: 40px; color: #fff; cursor: pointer;
+            transition: color 0.3s; line-height: 1;
+        }
+        .lightbox-close:hover { color: #c9a063; }
+
+        /* ================================================= */
+
+        /* 品牌实力区 */
+        #strength { padding: 100px 0; background-color: #f8f9fa; }
+        .strength-item { text-align: center; padding: 40px 20px; background: #fff; border-radius: 12px; }
+        .strength-icon { font-size: 36px; color: #c9a063; margin-bottom: 20px; }
+        .strength-item h3 { font-size: 20px; margin-bottom: 15px; }
+        .strength-item p { font-size: 14px; color: #666; }
+
+        /* 联系我们 */
+        #contact { padding: 100px 0; background: #fff; }
+        .contact-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+        .contact-info h3 { font-size: 24px; margin-bottom: 30px; }
+        .contact-info p { font-size: 16px; color: #555; margin-bottom: 20px; display: flex; align-items: center; }
+        .contact-info p span { font-weight: 600; color: #222; margin-right: 10px; min-width: 80px; }
+        .contact-form { background: #f9f9f9; padding: 40px; border-radius: 12px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; margin-bottom: 8px; color: #555; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 15px; border: 1px solid #ddd;
+            border-radius: 6px; font-size: 14px; outline: none; transition: border 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus { border-color: #c9a063; }
+        .submit-btn {
+            width: 100%; padding: 15px; background: #c9a063; color: #fff;
+            border: none; border-radius: 6px; font-size: 16px; cursor: pointer; transition: background 0.3s;
+        }
+        .submit-btn:hover { background: #b08a52; }
+
+        /* 页脚 */
+        footer { background: #222; color: #aaa; padding: 60px 0 30px; text-align: center; font-size: 14px; }
+        footer .footer-logo { color: #fff; font-size: 20px; font-weight: 600; margin-bottom: 20px; }
+        footer .footer-links { margin-bottom: 30px; }
+        footer .footer-links a { margin: 0 15px; color: #aaa; transition: color 0.3s; }
+        footer .footer-links a:hover { color: #fff; }
+        footer .copyright { border-top: 1px solid #333; padding-top: 30px; color: #666; font-size: 12px; }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .grid-3 { grid-template-columns: 1fr; }
+            .contact-wrapper { grid-template-columns: 1fr; }
+            .hero-content h1 { font-size: 32px; }
+            .hero-bottom-bar { flex-direction: column; gap: 10px; text-align: center; }
+            .gallery-grid { grid-template-columns: 1fr; }
+            .gallery-item { height: 220px; }
+            .gallery-content { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <header>
+        <div class="container nav-inner">
+            <div class="logo">佰益装饰</div>
+            <nav class="nav-links">
+                <a href="#hero">首页</a>
+                <a href="#styles">风格案例</a>
+                <a href="#strength">品牌实力</a>
+                <a href="#contact">联系我们</a>
+            </nav>
+            <div class="nav-contact">📞 52217888</div>
+        </div>
+    </header>
+
+    <!-- 首屏 Banner (轮播模式) -->
+    <section id="hero">
+        <!-- 注意：路径已经改为 ./Imge/ -->
+        <div class="hero-bg active" style="background-image: url('./Imge/banner1.jpg');"></div>
+        <div class="hero-bg" style="background-image: url('./Imge/banner2.jpg');"></div>
+        <div class="hero-bg" style="background-image: url('./Imge/banner3.jpg');"></div>
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content">
+            <h1 class="fade-in delay-1">佰益装饰 × 欧派整装大家居</h1>
+            <p class="fade-in delay-2">20年深耕，自有工人，不转包不发包</p>
+            <p class="fade-in delay-3">一站式整装，拎包入住</p>
+            <a href="#contact" class="hero-btn fade-in delay-4">免费预约设计</a>
+        </div>
+        
+        <div class="hero-bottom-bar fade-in delay-5">
+            <span>📍 丽君现代城佰益装饰3楼</span>
+            <span>📞 热线电话：52217888</span>
+        </div>
+    </section>
+
+    <!-- 风格案例区 -->
+    <section id="styles">
+        <div class="container">
+            <h2 class="section-title fade-in">风格案例</h2>
+            <p class="section-subtitle fade-in delay-1">真实实景拍摄，点击查看全套大图</p>
+            
+            <div class="grid-3">
+                <!-- 现代简约 -->
+                <div class="style-card fade-in delay-1" onclick="openGallery('modern')">
+                    <img src="./Imge/modern.jpg" alt="现代简约风格">
+                    <div class="style-info">
+                        <span class="style-tag">现代简约</span>
+                        <h3>极致纯粹，理性温润</h3>
+                        <p>摒弃繁复，以极致纯粹的空间语言，还原理性而温润的居家本真。</p>
+                        <p class="highlight">案例亮点：深色皮质沙发 + 大理石茶几 + 无主灯设计</p>
+                        <span class="click-hint">👉 点击查看更多实景图</span>
+                    </div>
+                </div>
+
+                <!-- 意式轻奢 -->
+                <div class="style-card fade-in delay-2" onclick="openGallery('luxury')">
+                    <img src="./Imge/luxury.jpg" alt="意式轻奢风格">
+                    <div class="style-info">
+                        <span class="style-tag">意式轻奢</span>
+                        <h3>低调奢华，精致质感</h3>
+                        <p>以意式极简为骨架，融入轻奢质感，在低调中诠释精致。</p>
+                        <p class="highlight">案例亮点：暖棕皮质单椅 + 木饰面电视墙 + 灰玻展示柜</p>
+                        <span class="click-hint">👉 点击查看更多实景图</span>
+                    </div>
+                </div>
+
+                <!-- 中古 -->
+                <div class="style-card fade-in delay-3" onclick="openGallery('mid-century')">
+                    <img src="./Imge/mid-century.jpg" alt="中古风格">
+                    <div class="style-info">
+                        <span class="style-tag">中古</span>
+                        <h3>时光温度，复古新生</h3>
+                        <p>复刻时光的温度，以复古与现代的碰撞，唤醒空间的怀旧生命力。</p>
+                        <p class="highlight">案例亮点：白色布艺沙发 + 人字拼木地板 + 复古玻璃吊灯</p>
+                        <span class="click-hint">👉 点击查看更多实景图</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 全屏图片画廊弹窗 ================= -->
+    <div class="gallery-modal" id="galleryModal">
+        <div class="gallery-content">
+            <span class="gallery-close" onclick="closeGallery()">×</span>
+            <h2 class="gallery-title" id="galleryTitle">风格案例展示</h2>
+            <div class="gallery-grid" id="galleryGrid">
+                <!-- 图片由 JS 动态填充 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 单图放大灯箱 ================= -->
+    <div class="lightbox-modal" id="lightboxModal" onclick="closeLightbox()">
+        <span class="lightbox-close" onclick="closeLightbox()">×</span>
+        <img id="lightboxImg" src="" alt="放大图片" onclick="event.stopPropagation()">
+    </div>
+
+    <!-- 品牌实力区 -->
+    <section id="strength">
+        <div class="container">
+            <h2 class="section-title fade-in">品牌实力</h2>
+            <p class="section-subtitle fade-in delay-1">为什么选择佰益装饰</p>
+            
+            <div class="grid-3">
+                <div class="strength-item fade-in delay-1">
+                    <div class="strength-icon">🛠️</div>
+                    <h3>自有工人 · 更放心</h3>
+                    <p>我们拥有自有固定施工团队，不转包、不发包。确保工艺标准统一、工期可控、售后有保障。</p>
+                </div>
+                <div class="strength-item fade-in delay-2">
+                    <div class="strength-icon">🏆</div>
+                    <h3>20年品牌 · 更安心</h3>
+                    <p>公司成立20年，深耕家装行业。以真材实料为基础，以工程质量为根本，以精彩设计为灵魂。</p>
+                </div>
+                <div class="strength-item fade-in delay-3">
+                    <div class="strength-icon">🤝</div>
+                    <h3>欧派整装大家居 · 更省心</h3>
+                    <p>依托欧派“6臻标准”服务体系，整合家装主材与软装供应链，真正实现一体化设计、一站式服务。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系我们 -->
+    <section id="contact">
+        <div class="container">
+            <h2 class="section-title fade-in">联系我们</h2>
+            <p class="section-subtitle fade-in delay-1">期待与您共同打造理想之家</p>
+            
+            <div class="contact-wrapper">
+                <div class="contact-info fade-in delay-1">
+                    <h3>佰益装饰欧派整装大家居</h3>
+                    <p><span>公司地址：</span>丽君现代城佰益装饰3楼</p>
+                    <p><span>公司热线：</span>52217888</p>
+                    <p><span>营业时间：</span>每日 9:00 - 18:00</p>
+                    <p style="margin-top: 30px; color: #888; font-size: 14px;">温馨提示：为了给您提供更精准的服务，建议提前电话预约或在线提交需求，我们的设计师将在24小时内与您联系。</p>
+                </div>
+                
+                <div class="contact-form fade-in delay-2">
+                    <form action="#" method="POST">
+                        <div class="form-group">
+                            <label>您的称呼</label>
+                            <input type="text" placeholder="请输入您的姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <label>联系电话</label>
+                            <input type="tel" placeholder="请输入您的手机号码" required>
+                        </div>
+                        <div class="form-group">
+                            <label>小区 / 面积</label>
+                            <input type="text" placeholder="例如：丽君现代城 120㎡">
+                        </div>
+                        <div class="form-group">
+                            <label>需求类型</label>
+                            <select>
+                                <option>整装（全包）</option>
+                                <option>旧房改造</option>
+                                <option>局部装修</option>
+                                <option>全屋定制</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="submit-btn">立即预约免费设计</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container fade-in">
+            <div class="footer-logo">佰益装饰 · 欧派整装大家居</div>
+            <div class="footer-links">
+                <a href="#hero">首页</a>
+                <a href="#styles">风格案例</a>
+                <a href="#strength">品牌实力</a>
+                <a href="#contact">联系我们</a>
+            </div>
+            <p>地址：丽君现代城佰益装饰3楼 &nbsp;|&nbsp; 热线：52217888</p>
+            <div class="copyright">
+                © 2026 佰益装饰 版权所有 | 本站案例图片均为实景拍摄，盗图必究
+            </div>
+        </div>
+    </footer>
+
+    <!-- 脚本区 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. 首屏背景轮播逻辑
+            const backgrounds = document.querySelectorAll('.hero-bg');
+            let currentIndex = 0;
+            const intervalTime = 5000;
+            function switchBackground() {
+                backgrounds[currentIndex].classList.remove('active');
+                currentIndex = (currentIndex + 1) % backgrounds.length;
+                backgrounds[currentIndex].classList.add('active');
+            }
+            setInterval(switchBackground, intervalTime);
+
+            // 2. 滚动缓入动画逻辑
+            const fadeElements = document.querySelectorAll('.fade-in');
+            const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+            const observer = new IntersectionObserver(function(entries, observer) {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            fadeElements.forEach(element => observer.observe(element));
+
+            setTimeout(() => {
+                document.querySelectorAll('#hero .fade-in').forEach(el => el.classList.add('visible'));
+            }, 100);
+
+            // ================= 3. 图库数据与交互逻辑 =================
+            // 注意：路径已经全部改为 './Imge/'
+            const galleryData = {
+                'modern': {
+                    title: '现代简约 · 实景案例',
+                    images: [
+                        './Imge/modern.jpg',
+                        './Imge/modern-2.jpg',
+                        './Imge/modern-3.jpg',
+                        './Imge/modern-4.jpg',
+                        './Imge/modern-5.jpg'
+                    ]
+                },
+                'luxury': {
+                    title: '意式轻奢 · 实景案例',
+                    images: [
+                        './Imge/luxury.jpg',
+                        './Imge/luxury-2.jpg',
+                        './Imge/luxury-3.jpg',
+                        './Imge/luxury-4.jpg',
+                        './Imge/luxury-5.jpg'
+                    ]
+                },
+                'mid-century': {
+                    title: '中古风 · 实景案例',
+                    images: [
+                        './Imge/mid-century.jpg',
+                        './Imge/mid-century-2.jpg',
+                        './Imge/mid-century-3.jpg',
+                        './Imge/mid-century-4.jpg',
+                        './Imge/mid-century-5.jpg'
+                    ]
+                }
+            };
+
+            const modal = document.getElementById('galleryModal');
+            const modalTitle = document.getElementById('galleryTitle');
+            const modalGrid = document.getElementById('galleryGrid');
+            const lightboxModal = document.getElementById('lightboxModal');
+            const lightboxImg = document.getElementById('lightboxImg');
+
+            // 打开图库
+            window.openGallery = function(styleKey) {
+                const data = galleryData[styleKey];
+                if (!data) return;
+
+                modalTitle.textContent = data.title;
+                modalGrid.innerHTML = '';
+                
+                // 动态生成图片
+                data.images.forEach((imgSrc, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'gallery-item';
+                    item.style.animation = 'dealCard 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards';
+                    const delay = Math.min(index * 0.12, 0.8); 
+                    item.style.animationDelay = delay + 's';
+
+                    const img = document.createElement('img');
+                    img.src = imgSrc;
+                    img.alt = data.title;
+                    
+                    // 核心新增：点击图库中的图片，调用放大灯箱
+                    img.onclick = function() {
+                        openLightbox(imgSrc);
+                    };
+                    
+                    item.appendChild(img);
+                    modalGrid.appendChild(item);
+                });
+
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+
+            // 关闭图库
+            window.closeGallery = function() {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+            };
+
+            // 点击图库遮罩层也可以关闭图库
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeGallery();
+                }
+            });
+
+            // ================= 4. 单图放大灯箱逻辑 =================
+            window.openLightbox = function(src) {
+                lightboxImg.src = src;
+                lightboxModal.classList.add('active');
+            };
+
+            window.closeLightbox = function() {
+                lightboxModal.classList.remove('active');
+                setTimeout(() => { lightboxImg.src = ''; }, 300);
+            };
+
+        });
+    </script>
+</body>
+</html>
